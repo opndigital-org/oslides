@@ -1,10 +1,6 @@
 
 @import "tailwindcss";
 
-/* =========================================================
-   Global document setup
-   ========================================================= */
-
 :root {
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system,
@@ -39,7 +35,6 @@ body {
   overflow: hidden;
 }
 
-button,
 input,
 textarea,
 select {
@@ -54,11 +49,6 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* =========================================================
-   Markdown and code-rendering defaults
-   ========================================================= */
-
-/* Avoid unexpected default margins in rendered code blocks. */
 pre {
   margin: 0;
   font-family:
@@ -66,19 +56,18 @@ pre {
     Menlo, monospace;
 }
 
-/* Preserve indentation and allow horizontal scrolling for long lines. */
+/* preserve indentation and allow horizontal scrolling for long lines. */
 pre code {
   display: block;
   tab-size: 2;
   white-space: pre;
 }
 
-/* Let the surrounding Tailwind container control code block colours. */
 .hljs {
   background: transparent;
 }
 
-/* Keep images and other embedded media within the slide width. */
+/* contain embedded media within slide */
 img,
 video,
 svg {
@@ -90,13 +79,12 @@ video {
   height: auto;
 }
 
-/* Keep keyboard navigation visible and accessible. */
+/* visible keyboard navigations */
 :focus-visible {
   outline: 2px solid #60a5fa;
   outline-offset: 3px;
 }
 
-/* Respect reduced-motion preferences. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

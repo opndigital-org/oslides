@@ -30,7 +30,7 @@ export function Navbar({
                         <button
                             type="button"
                             onClick={onOpenDecks}
-                            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white font-mono uppercase"
+                            className="flex items-center gap-2 rounded-lg py-2 px-4 font-mono uppercase text-sm text-slate-300 hover:text-white hover:bg-slate-800 transition"
                         >
                             <FolderOpen size={16} aria-hidden="true" />
                             Decks
@@ -50,7 +50,7 @@ export function Navbar({
                     <button
                         type="button"
                         onClick={onSignIn}
-                        className="flex items-center gap-2 rounded-lg border border-slate-700 py-2 px-4 text-sm text-slate-300 transition hover:bg-slate-800 hover:text-white font-mono uppercase"
+                        className="flex items-center gap-2 rounded-lg border border-slate-700 py-2 px-4 font-mono uppercase text-sm text-slate-300 hover:text-white hover:bg-slate-800 transition"
                     >
                         Sign in
                     </button>

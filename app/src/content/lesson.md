@@ -43,13 +43,16 @@ for n in nums:
 
 # Villains Total Salary
 
-1. Output the list of villains and their salary:
-    - Thanos: £5000
-    - Dr. Doom: £3000
-    - Doc Ock: £850
-    - Ultron: £1300
+Task: Output the list of villains and their salary
 
-:::space{size=large}
+| Villain  | Salary (£) |
+|----------|------------|
+| Thanos   | 5000       |
+| Dr. Doom | 3000       |
+| Doc Ock  | 850        |
+| Ultron   | 1300       |
+
+:::space{size=sm}
 :::
 
 ```python live filename="villains.py"
