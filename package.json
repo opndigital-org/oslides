@@ -1,0 +1,16 @@
+{
+	"name": "oslides",
+    "private": true,
+    "scripts": {
+        "supabase:start": "supabase start",
+        "supabase:stop": "supabase stop",
+        "supabase:reset": "supabase db reset",
+        "dev:app": "pnpm --dir app dev",
+        "dev:api": "pnpm --dir api dev",
+        "build:app": "pnpm --dir app build",
+        "typecheck:api": "pnpm --dir api typecheck"
+    },
+	"devDependencies": {
+		"supabase": "^2.121.0"
+	}
+}
