@@ -25,6 +25,8 @@ const deckIdParamsSchema = z.object({
 const getDeckRoute = createRoute({
     method: "get",
     path: "/{id}",
+    tags: ["Decks"],
+    summary: "Get a Deck by id",
     request: {
         params: z.object({
             id: z.string().uuid(),
@@ -93,6 +95,8 @@ decks.openapi(getDeckRoute, async (c) => {
 const createDeckRoute = createRoute({
     method: "post",
     path: "/",
+    tags: ["Decks"],
+    summary: "Create a new Deck",
     request: {
         body: {
             content: {
@@ -164,6 +168,8 @@ decks.openapi(createDeckRoute, async (c) => {
 const updateDeckRoute = createRoute({
     method: "patch",
     path: "/{id}",
+    tags: ["Decks"],
+    summary: "Update a Deck",
     request: {
         params: deckIdParamsSchema,
         body: {
@@ -265,6 +271,8 @@ decks.openapi(updateDeckRoute, async (c) => {
 const deleteDeckRoute = createRoute({
     method: "delete",
     path: "/{id}",
+    tags: ["Decks"],
+    summary: "Delete a Deck",
     request: {
         params: deckIdParamsSchema,
     },
