@@ -7,16 +7,18 @@ import { oneDark } from "@codemirror/theme-one-dark";
 type MarkdownEditorProps = {
     markdown: string;
     onChange: (markdown: string) => void;
+    onSave: () => void;
     onClear?: () => void;
 };
 
 export function MarkdownEditor({
     markdown,
     onChange,
+    onSave
 }: MarkdownEditorProps) {
     return (
         <section className="flex min-h-0 min-w-0 flex-col overflow-hidden border-r border-slate-800 bg-[#0d1117]">
-            <header className="flex shrink-0 items-center justify-between border-b border-slate-800 bg-[#161b22] px-4 py-4">
+            <header className="flex shrink-0 items-center justify-between border-b border-slate-800 bg-[#0d1117] px-4 py-2">
                 <div className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-[#05C0D9]" />
 
@@ -24,6 +26,11 @@ export function MarkdownEditor({
                         Markdown source
                     </h2>
                 </div>
+
+                <button
+                    className="rounded-lg border border-slate-700 bg-slate-900/80 py-2 px-4 text-xs text-slate-300 transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-30"
+                    onClick={onSave}
+                >Save</button>
             </header>
 
             <div className="min-h-0 flex-1 overflow-auto bg-[#0d1117]">

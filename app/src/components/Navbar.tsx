@@ -11,7 +11,7 @@ export function Navbar({
     onSignOut,
 }: Props) {
     return (
-        <header className="z-20 flex shrink-0 items-center justify-between border-b border-slate-800 bg-[#0d1117] py-1 px-4 sm:px-6">
+        <header className="z-20 flex shrink-0 items-center justify-between border-b border-slate-800 bg-[#0d1117] py-1 px-4">
             <div className="flex gap-2 items-center">
                 <img src="/favicon.svg" width={"50px"} />
                 <p className="text-base font-semibold tracking-tight text-white">

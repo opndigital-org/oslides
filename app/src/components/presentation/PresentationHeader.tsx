@@ -24,7 +24,7 @@ export function PresentationHeader({
     onToggleFullscreen,
 }: Props) {
     return (
-        <header className="flex shrink-0 items-center gap-3 border-b border-slate-800/80 px-4 py-2 sm:px-6 lg:px-8">
+        <header className="flex shrink-0 items-center gap-3 border-b border-slate-800/80 px-4 py-2">
             <span
                 className="min-w-0 flex-1 truncate font-mono text-xs font-medium text-[#8b949e] sm:text-sm"
                 title={presentationTitle}
