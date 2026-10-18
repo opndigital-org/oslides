@@ -18,7 +18,7 @@ export function MarkdownEditor({
         <section className="flex min-h-0 min-w-0 flex-col overflow-hidden border-r border-slate-800 bg-[#0d1117]">
             <header className="flex shrink-0 items-center justify-between border-b border-slate-800 bg-[#161b22] px-4 py-4">
                 <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-sky-400" />
+                    <span className="h-2 w-2 rounded-full bg-[#05C0D9]" />
 
                     <h2 className="text-xs font-mono uppercase tracking-wider text-slate-300">
                         Markdown source

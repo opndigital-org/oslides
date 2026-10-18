@@ -21,7 +21,7 @@ export function MarkdownLink({ href, title, children }: Props) {
             title={title ?? undefined}
             target={isExternal ? "_blank" : undefined}
             rel={isExternal ? "noopener noreferrer" : undefined}
-            className="text-sky-400 underline decoration-sky-400/40 underline-offset-4 transition-colors hover:text-sky-300 hover:decoration-sky-300"
+            className="text-[#05C0D9] underline decoration-[#05C0D9] underline-offset-4 transition-colors hover:text-[#05C0D9]/40 hover:decoration-[#05C0D9]/40"
         >
             {children}
         </a>

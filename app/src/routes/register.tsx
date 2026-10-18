@@ -178,7 +178,7 @@ function RegisterRoute() {
                     <button
                         type="submit"
                         disabled={submitting}
-                        className="w-full rounded-md bg-sky-400 px-4 py-3 font-medium text-black hover:bg-sky-300 disabled:cursor-not-allowed disabled:opacity-60"
+                        className="w-full rounded-md bg-[#05C0D9] px-4 py-3 font-medium text-black hover:bg-[#05C0D9]/40 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                         {submitting ? "Creating account..." : "Create account"}
                     </button>
