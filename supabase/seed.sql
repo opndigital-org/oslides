@@ -9,7 +9,7 @@ begin
     select id
     into dev_user_id
     from auth.users
-    where email = 'dev@opnweb.org';
+    where email = 'dev@finetype.org';
 
     if dev_user_id is null then
         dev_user_id := gen_random_uuid();
@@ -36,7 +36,7 @@ begin
             '00000000-0000-0000-0000-000000000000',
             'authenticated',
             'authenticated',
-            'dev@opnweb.org',
+            'dev@finetype.org',
             extensions.crypt('password123', extensions.gen_salt('bf')),
             now(),
             '{"provider":"email","providers":["email"]}'::jsonb,
