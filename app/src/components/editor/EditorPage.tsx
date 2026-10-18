@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { MarkdownEditor } from "@/components/editor/MarkdownEditor";
@@ -9,15 +8,25 @@ import { api } from "@/lib/api/client";
 type EditorPageProps = {
     mode: "new" | "edit";
     id?: string;
+    initialDeck?: {
+        title: string;
+        markdownContent: string;
+    };
 };
 
-export function EditorPage({ mode, id }: EditorPageProps) {
+export function EditorPage({
+    mode,
+    id,
+    initialDeck,
+}: EditorPageProps) {
     const navigate = useNavigate();
 
-    const [markdown, setMarkdown] = useState("");
+    const [markdown, setMarkdown] = useState(
+        () => initialDeck?.markdownContent ?? "",
+    );
     const [currentSlide, setCurrentSlide] = useState(0);
     const [showEditor, setShowEditor] = useState(true);
-    const [loading, setLoading] = useState(mode === "edit");
+    const [loading, setLoading] = useState(mode === "edit" && !initialDeck);
     const [saving, setSaving] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -33,52 +42,19 @@ export function EditorPage({ mode, id }: EditorPageProps) {
     );
     const slide = slides[safeCurrentSlide];
 
-    const title = String(presentation.metadata.title ?? "Untitled");
+    const title = String(
+        presentation.metadata.title ?? initialDeck?.title ?? "Untitled",
+    );
 
     useEffect(() => {
-        if (mode !== "edit" || !id) {
-            setLoading(false);
-            return;
-        }
-
-        let cancelled = false;
-
-        async function loadDeck() {
-            setLoading(true);
-            setErrorMessage(null);
-
-            const { data, error } = await api.GET("/api/decks/{id}", {
-                params: {
-                    path: { id },
-                },
-            });
-
-            if (cancelled) {
-                return;
-            }
-
-            if (error || !data) {
-                setErrorMessage("Could not load this presentation.");
-                setLoading(false);
-                return;
-            }
-
-            setMarkdown(data.deck.markdownContent);
+        if (initialDeck) {
+            setMarkdown(initialDeck.markdownContent);
+            setCurrentSlide(0);
             setLoading(false);
         }
-
-        void loadDeck();
-
-        return () => {
-            cancelled = true;
-        };
-    }, [mode, id]);
-
+    }, [initialDeck]);
 
     async function handleSave() {
-
-        console.log("Save clicked:", { mode, id });
-        
         if (saving) {
             return;
         }
@@ -132,7 +108,6 @@ export function EditorPage({ mode, id }: EditorPageProps) {
         }
     }
 
-
     function goToSlide(index: number) {
         setCurrentSlide(
             Math.max(0, Math.min(index, slides.length - 1)),
@@ -166,11 +141,9 @@ export function EditorPage({ mode, id }: EditorPageProps) {
             >
                 {showEditor && (
                     <MarkdownEditor
-                        title={title}
                         markdown={markdown}
                         onChange={(value) => {
                             setMarkdown(value);
-                            setCurrentSlide(0);
                         }}
                         handleSave={handleSave}
                     />

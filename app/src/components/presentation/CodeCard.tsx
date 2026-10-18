@@ -83,7 +83,7 @@ export function CodeCard({
 
       {/* Syntax-highlighted code */}
       <div className="max-w-full overflow-x-auto overscroll-x-contain">
-        <pre className="m-0 min-w-0 bg-transparent px-4 py-4 text-[13px] leading-6 sm:px-5 sm:text-sm">
+        <pre className="m-0 min-w-0 bg-transparent px-4 py-4 text-[24px] leading-6 sm:px-5">
           <code
             className={`hljs language-${language} block font-mono`}
             dangerouslySetInnerHTML={{ __html: highlightedCode }}
