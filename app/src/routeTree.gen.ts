@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DecksRouteImport } from './routes/decks'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as NewRouteImport } from './routes/new'
 import { Route as RegisterRouteImport } from './routes/register'
@@ -18,6 +19,11 @@ import { Route as EditIdRouteImport } from './routes/edit/$id'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DecksRoute = DecksRouteImport.update({
+  id: '/decks',
+  path: '/decks',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -43,6 +49,7 @@ const EditIdRoute = EditIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/decks': typeof DecksRoute
   '/login': typeof LoginRoute
   '/new': typeof NewRoute
   '/register': typeof RegisterRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/decks': typeof DecksRoute
   '/login': typeof LoginRoute
   '/new': typeof NewRoute
   '/register': typeof RegisterRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/decks': typeof DecksRoute
   '/login': typeof LoginRoute
   '/new': typeof NewRoute
   '/register': typeof RegisterRoute
@@ -65,14 +74,16 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/new' | '/register' | '/edit/$id'
+  fullPaths: '/' | '/decks' | '/login' | '/new' | '/register' | '/edit/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/new' | '/register' | '/edit/$id'
-  id: '__root__' | '/' | '/login' | '/new' | '/register' | '/edit/$id'
+  to: '/' | '/decks' | '/login' | '/new' | '/register' | '/edit/$id'
+  id:
+    '__root__' | '/' | '/decks' | '/login' | '/new' | '/register' | '/edit/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DecksRoute: typeof DecksRoute
   LoginRoute: typeof LoginRoute
   NewRoute: typeof NewRoute
   RegisterRoute: typeof RegisterRoute
@@ -86,6 +97,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/decks': {
+      id: '/decks'
+      path: '/decks'
+      fullPath: '/decks'
+      preLoaderRoute: typeof DecksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -121,6 +139,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DecksRoute: DecksRoute,
   LoginRoute: LoginRoute,
   NewRoute: NewRoute,
   RegisterRoute: RegisterRoute,

@@ -92,6 +92,80 @@ decks.openapi(getDeckRoute, async (c) => {
     }, 200);
 });
 
+export const listDecksRoute = createRoute({
+    method: "get",
+    path: "/",
+    tags: ["Decks"],
+    summary: "List all decks",
+    description:
+        "Returns all decks owned by the authenticated user, ordered by most recently updated.",
+    responses: {
+        200: {
+            description: "Decks retrieved successfully.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        decks: z.array(
+                            z.object({
+                                id: z.string().uuid(),
+                                title: z.string(),
+                                markdownContent: z.string(),
+                                createdAt: z.string(),
+                                updatedAt: z.string(),
+                            }),
+                        ),
+                    }),
+                },
+            },
+        },
+        401: {
+            description: "Authentication required.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string(),
+                    }),
+                },
+            },
+        },
+        500: {
+            description: "Failed to retrieve decks.",
+            content: {
+                "application/json": {
+                    schema: z.object({
+                        message: z.string(),
+                    }),
+                },
+            },
+        },
+    },
+});
+
+decks.openapi(listDecksRoute, async (c) => {
+    const userId = c.get("userId");
+    const supabase = c.get("supabase");
+
+    const { data, error } = await supabase
+        .from("decks")
+        .select("id, title, markdown_content, created_at, updated_at")
+        .eq("user_id", userId)
+        .order("updated_at", { ascending: false });
+
+    if (error) {
+        return c.json({ message: "Could not load decks." }, 500);
+    }
+
+    return c.json({
+        decks: data.map((deck) => ({
+            id: deck.id,
+            title: deck.title,
+            markdownContent: deck.markdown_content,
+            createdAt: deck.created_at,
+            updatedAt: deck.updated_at,
+        })),
+    }, 200);
+});
+
 const createDeckRoute = createRoute({
     method: "post",
     path: "/",
