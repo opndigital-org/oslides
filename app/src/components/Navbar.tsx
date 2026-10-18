@@ -1,5 +1,5 @@
 
-import { FolderOpen, Settings } from "lucide-react";
+import { FolderOpen, Plus, Settings } from "lucide-react";
 
 type Props = {
     isAuthenticated: boolean;
@@ -25,6 +25,13 @@ export function Navbar({
             >
                 {isAuthenticated ? (
                     <>
+                        <a
+                            href="/new"
+                            className="flex items-center gap-2 rounded-lg py-2 px-4 font-mono uppercase text-sm text-slate-300 hover:text-white hover:bg-slate-800 transition"
+                        >
+                            <Plus size={16} aria-hidden="true" />
+                            Create Deck
+                        </a>
                         <a
                             href="/decks"
                             className="flex items-center gap-2 rounded-lg py-2 px-4 font-mono uppercase text-sm text-slate-300 hover:text-white hover:bg-slate-800 transition"
