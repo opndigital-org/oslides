@@ -77,7 +77,7 @@ export function MarkdownNodeRenderer({ node, keyPrefix }: Props) {
 
         case "inlineCode":
             return (
-                <code className="rounded-md border border-slate-700/70 bg-slate-800/80 px-1.5 py-0.5 font-mono text-[0.9em] text-sky-300">
+                <code className="rounded-md border border-slate-700/70 bg-slate-800/80 px-1.5 py-0.5 font-mono text-[0.9em] text-[#05C0D9]">
                     {node.value ?? ""}
                 </code>
             );
@@ -106,7 +106,7 @@ export function MarkdownNodeRenderer({ node, keyPrefix }: Props) {
 
         case "blockquote":
             return (
-                <blockquote className="my-5 border-l-2 border-sky-500/70 pl-4 text-slate-300 [&>p]:mb-2 [&>p:last-child]:mb-0">
+                <blockquote className="my-5 border-l-2 border-[#05C0D9]/70 pl-4 text-slate-300 [&>p]:mb-2 [&>p:last-child]:mb-0">
                     {children}
                 </blockquote>
             );

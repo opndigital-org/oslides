@@ -9,8 +9,7 @@
 		"dev:api": "pnpm --dir api dev",
 		"build:app": "pnpm --dir app build",
 		"typecheck:api": "pnpm --dir api typecheck",
-		"openapi:export": "curl -fsS http://localhost:8600/openapi.json -o api/openapi.json",
-        "openapi:types": "pnpm run openapi:export && pnpm exec openapi-typescript api/openapi.json -o app/src/lib/api/schema.d.ts"
+		"api:generate": "pnpm --filter app exec openapi-typescript http://localhost:8600/openapi.json -o src/lib/api/schema.d.ts"
 	},
 	"devDependencies": {
 		"openapi-typescript": "^7.13.0",

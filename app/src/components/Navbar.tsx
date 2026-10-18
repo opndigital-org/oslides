@@ -1,5 +1,5 @@
 
-import { FolderOpen, Settings } from "lucide-react";
+import { FolderOpen, Plus, Settings } from "lucide-react";
 
 type Props = {
     isAuthenticated: boolean;
@@ -11,7 +11,7 @@ export function Navbar({
     onSignOut,
 }: Props) {
     return (
-        <header className="z-20 flex shrink-0 items-center justify-between border-b border-slate-800 bg-[#0d1117] py-1 px-4 sm:px-6">
+        <header className="z-20 flex shrink-0 items-center justify-between border-b border-slate-800 bg-[#0d1117] py-1 px-4">
             <div className="flex gap-2 items-center">
                 <img src="/favicon.svg" width={"50px"} />
                 <p className="text-base font-semibold tracking-tight text-white">
@@ -25,6 +25,13 @@ export function Navbar({
             >
                 {isAuthenticated ? (
                     <>
+                        <a
+                            href="/new"
+                            className="flex items-center gap-2 rounded-lg py-2 px-4 font-mono uppercase text-sm text-slate-300 hover:text-white hover:bg-slate-800 transition"
+                        >
+                            <Plus size={16} aria-hidden="true" />
+                            Create Deck
+                        </a>
                         <a
                             href="/decks"
                             className="flex items-center gap-2 rounded-lg py-2 px-4 font-mono uppercase text-sm text-slate-300 hover:text-white hover:bg-slate-800 transition"
