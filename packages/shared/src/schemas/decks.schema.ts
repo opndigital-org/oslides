@@ -1,6 +1,18 @@
 import { z } from "zod";
 
 
+export const deckSummarySchema = z.object({
+    id: z.string().uuid(),
+    title: z.string(),
+    markdownContent: z.string(),
+    createdAt: z.string(),
+    updatedAt: z.string(),
+});
+
+export const listDecksResponseSchema = z.object({
+    decks: z.array(deckSummarySchema),
+});
+
 export const getDeckResponseSchema = z.object({
     deck: z.object({
         id: z.string().uuid(),
@@ -50,6 +62,9 @@ export const deleteDeckResponseSchema = z.object({
     id: z.string().uuid(),
 });
 
+
+export type DeckSummary = z.infer<typeof deckSummarySchema>;
+export type ListDecksResponse = z.infer<typeof listDecksResponseSchema>;
 
 export type GetDeckResponse = z.infer<typeof getDeckResponseSchema>;
 

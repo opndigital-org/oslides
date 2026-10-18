@@ -288,6 +288,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** Get a Deck by id */
         get: {
             parameters: {
                 query?: never;
@@ -343,6 +344,7 @@ export interface paths {
         };
         put?: never;
         post?: never;
+        /** Delete a Deck */
         delete: {
             parameters: {
                 query?: never;
@@ -404,6 +406,7 @@ export interface paths {
         };
         options?: never;
         head?: never;
+        /** Update a Deck */
         patch: {
             parameters: {
                 query?: never;
@@ -483,8 +486,63 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * List the authenticated user's decks
+         * @description Returns all decks owned by the authenticated user, ordered by most recently updated.
+         */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Decks retrieved successfully. */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            decks: {
+                                /** Format: uuid */
+                                id: string;
+                                title: string;
+                                markdownContent: string;
+                                createdAt: string;
+                                updatedAt: string;
+                            }[];
+                        };
+                    };
+                };
+                /** @description Authentication required. */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            message: string;
+                        };
+                    };
+                };
+                /** @description Failed to retrieve decks. */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            message: string;
+                        };
+                    };
+                };
+            };
+        };
         put?: never;
+        /** Create a new Deck */
         post: {
             parameters: {
                 query?: never;
