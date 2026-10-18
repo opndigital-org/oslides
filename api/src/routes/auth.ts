@@ -1,5 +1,5 @@
 
-import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
+import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import {
     adminSupabase,
     clearSessionCookie,
@@ -17,39 +17,17 @@ import { type AuthEnv } from "../middleware/session-auth";
 
 const auth = new OpenAPIHono<AuthEnv>();
 
-const signUpSchema = z.object({
-    email: z.string().trim().email().max(254).openapi({
-        example: "test@example.com",
-    }),
-    password: z.string().min(8).max(128).openapi({
-        example: "password123",
-    }),
-    displayName: z.string().trim().min(1).max(80).openapi({
-        example: "test",
-    }),
-});
 
-const signInSchema = z.object({
-    email: z.string().trim().email().max(254),
-    password: z.string().min(1).max(128),
-});
+import {
+    errorSchema,
+    loginResponseSchema,
+    logoutResponseSchema,
+    meResponseSchema,
+    registerResponseSchema,
+    signInSchema,
+    signUpSchema,
+} from "@oslides/shared";
 
-const errorSchema = z.object({ error: z.string() });
-
-const userSchema = z.object({
-    id: z.string().uuid(),
-    email: z.string().email().nullable(),
-    displayName: z.string().nullable(),
-});
-
-const registerResponseSchema = z.object({
-    user: userSchema.nullable(),
-    requiresEmailConfirmation: z.boolean(),
-});
-
-const loginResponseSchema = z.object({
-    user: userSchema,
-});
 
 function toPublicUser(user: {
     id: string;
@@ -183,9 +161,7 @@ const logoutRoute = createRoute({
         200: {
             description: "Logout successful",
             content: {
-                "application/json": {
-                    schema: z.object({ success: z.literal(true) }),
-                },
+                "application/json": { schema: logoutResponseSchema },
             },
         },
         401: {
@@ -215,7 +191,7 @@ const meRoute = createRoute({
             description: "Current user",
             content: {
                 "application/json": {
-                    schema: z.object({ user: userSchema }),
+                    schema: meResponseSchema,
                 },
             },
         },
