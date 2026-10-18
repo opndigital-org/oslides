@@ -1,0 +1,19 @@
+{
+	"name": "oslides",
+	"private": true,
+	"scripts": {
+		"supabase:start": "supabase start",
+		"supabase:stop": "supabase stop",
+		"supabase:reset": "supabase db reset",
+		"dev:app": "pnpm --dir app dev",
+		"dev:api": "pnpm --dir api dev",
+		"build:app": "pnpm --dir app build",
+		"typecheck:api": "pnpm --dir api typecheck",
+		"openapi:export": "curl -fsS http://localhost:8600/openapi.json -o api/openapi.json",
+        "openapi:types": "pnpm run openapi:export && pnpm exec openapi-typescript api/openapi.json -o app/src/lib/api/schema.d.ts"
+	},
+	"devDependencies": {
+		"openapi-typescript": "^7.13.0",
+		"supabase": "^2.121.0"
+	}
+}
