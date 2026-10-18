@@ -1,34 +1,40 @@
 
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { createSupabaseClient } from "../lib/supabase";
-import { requireAuth, type AuthEnv } from "../middleware/auth";
+import {
+    adminSupabase,
+    clearSessionCookie,
+    createSessionId,
+    encryptSecret,
+    hashSessionId,
+    readSessionCookie,
+    revokeSession,
+    setSessionCookie,
+    SESSION_ABSOLUTE_LIFETIME_MS,
+} from "../lib/session";
+import { createAuthClient } from "../lib/auth-client";
+import { requireSession } from "../middleware/session-auth";
+import { type AuthEnv } from "../middleware/session-auth";
 
 const auth = new OpenAPIHono<AuthEnv>();
 
 const signUpSchema = z.object({
     email: z.string().trim().email().max(254).openapi({
-        example: "dev@finetype.org",
+        example: "test@example.com",
     }),
     password: z.string().min(8).max(128).openapi({
         example: "password123",
     }),
     displayName: z.string().trim().min(1).max(80).openapi({
-        example: "dev",
+        example: "test",
     }),
 });
 
 const signInSchema = z.object({
-    email: z.string().trim().email().max(254).openapi({
-        example: "dev@finetype.org",
-    }),
-    password: z.string().min(1).max(128).openapi({
-        example: "password123",
-    }),
+    email: z.string().trim().email().max(254),
+    password: z.string().min(1).max(128),
 });
 
-const errorSchema = z.object({
-    error: z.string(),
-});
+const errorSchema = z.object({ error: z.string() });
 
 const userSchema = z.object({
     id: z.string().uuid(),
@@ -36,39 +42,66 @@ const userSchema = z.object({
     displayName: z.string().nullable(),
 });
 
-const sessionSchema = z.object({
-    access_token: z.string(),
-    refresh_token: z.string(),
-    token_type: z.string(),
-    expires_in: z.number(),
-    expires_at: z.number().optional(),
-    user: z.unknown(),
-}).passthrough();
-
 const registerResponseSchema = z.object({
-    user: z.unknown().nullable(),
-    session: sessionSchema.nullable(),
+    user: userSchema.nullable(),
     requiresEmailConfirmation: z.boolean(),
 });
 
 const loginResponseSchema = z.object({
-    user: z.unknown(),
-    session: sessionSchema,
+    user: userSchema,
 });
+
+function toPublicUser(user: {
+    id: string;
+    email?: string;
+    user_metadata?: Record<string, unknown>;
+}) {
+    const displayName = user.user_metadata?.display_name;
+
+    return {
+        id: user.id,
+        email: user.email ?? null,
+        displayName: typeof displayName === "string" ? displayName : null,
+    };
+}
+
+async function createServerSession(
+    userId: string,
+    accessToken: string,
+    refreshToken: string,
+    expiresIn: number,
+) {
+    const sessionId = createSessionId();
+    const now = Date.now();
+
+    const { error } = await adminSupabase.from("app_sessions").insert({
+        id_hash: hashSessionId(sessionId),
+        user_id: userId,
+        access_token_encrypted: encryptSecret(accessToken),
+        refresh_token_encrypted: encryptSecret(refreshToken),
+        access_token_expires_at: new Date(now + expiresIn * 1000).toISOString(),
+        created_at: new Date(now).toISOString(),
+        last_seen_at: new Date(now).toISOString(),
+        absolute_expires_at: new Date(now + SESSION_ABSOLUTE_LIFETIME_MS).toISOString(),
+    });
+
+    if (error) {
+        throw new Error("Unable to create a server session.");
+    }
+
+    return sessionId;
+}
 
 const registerRoute = createRoute({
     method: "post",
     path: "/register",
     tags: ["Authentication"],
     summary: "Register a user",
-    description: "Create an account using an email, password, and display name.",
     request: {
         body: {
             required: true,
             content: {
-                "application/json": {
-                    schema: signUpSchema,
-                },
+                "application/json": { schema: signUpSchema },
             },
         },
     },
@@ -84,9 +117,13 @@ const registerRoute = createRoute({
         400: {
             description: "Invalid input or registration failed",
             content: {
-                "application/json": {
-                    schema: errorSchema,
-                },
+                "application/json": { schema: errorSchema },
+            },
+        },
+        500: {
+            description: "Unable to start a session",
+            content: {
+                "application/json": { schema: errorSchema },
             },
         },
     },
@@ -97,14 +134,11 @@ const loginRoute = createRoute({
     path: "/login",
     tags: ["Authentication"],
     summary: "Log in",
-    description: "Authenticate using email and password.",
     request: {
         body: {
             required: true,
             content: {
-                "application/json": {
-                    schema: signInSchema,
-                },
+                "application/json": { schema: signInSchema },
             },
         },
     },
@@ -120,17 +154,19 @@ const loginRoute = createRoute({
         400: {
             description: "Invalid request",
             content: {
-                "application/json": {
-                    schema: errorSchema,
-                },
+                "application/json": { schema: errorSchema },
             },
         },
         401: {
             description: "Invalid credentials",
             content: {
-                "application/json": {
-                    schema: errorSchema,
-                },
+                "application/json": { schema: errorSchema },
+            },
+        },
+        500: {
+            description: "Unable to start a session",
+            content: {
+                "application/json": { schema: errorSchema },
             },
         },
     },
@@ -141,34 +177,27 @@ const logoutRoute = createRoute({
     path: "/logout",
     tags: ["Authentication"],
     summary: "Log out",
-    description: "Sign out the current authenticated session.",
-    middleware: [requireAuth],
-    security: [{ Bearer: [] }],
+    middleware: [requireSession],
+    security: [{ CookieAuth: [] }],
     responses: {
         200: {
             description: "Logout successful",
             content: {
                 "application/json": {
-                    schema: z.object({
-                        success: z.literal(true),
-                    }),
+                    schema: z.object({ success: z.literal(true) }),
                 },
             },
         },
         401: {
-            description: "Authentication required or token invalid",
+            description: "Authentication required",
             content: {
-                "application/json": {
-                    schema: errorSchema,
-                },
+                "application/json": { schema: errorSchema },
             },
         },
         500: {
             description: "Logout failed",
             content: {
-                "application/json": {
-                    schema: errorSchema,
-                },
+                "application/json": { schema: errorSchema },
             },
         },
     },
@@ -179,26 +208,21 @@ const meRoute = createRoute({
     path: "/me",
     tags: ["Authentication"],
     summary: "Get current user",
-    description: "Return basic information about the authenticated user.",
-    middleware: [requireAuth],
-    security: [{ Bearer: [] }],
+    middleware: [requireSession],
+    security: [{ CookieAuth: [] }],
     responses: {
         200: {
             description: "Current user",
             content: {
                 "application/json": {
-                    schema: z.object({
-                        user: userSchema,
-                    }),
+                    schema: z.object({ user: userSchema }),
                 },
             },
         },
         401: {
-            description: "Authentication required or token invalid",
+            description: "Authentication required",
             content: {
-                "application/json": {
-                    schema: errorSchema,
-                },
+                "application/json": { schema: errorSchema },
             },
         },
     },
@@ -206,83 +230,106 @@ const meRoute = createRoute({
 
 auth.openapi(registerRoute, async (c) => {
     const { email, password, displayName } = c.req.valid("json");
-    const supabase = createSupabaseClient();
 
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await createAuthClient().auth.signUp({
         email,
         password,
-        options: {
-            data: {
-                display_name: displayName,
-            },
-        },
+        options: { data: { display_name: displayName } },
     });
 
-    if (error) {
-        return c.json({ error: error.message }, 400);
+    if (error || !data.user) {
+        return c.json(
+            { error: "Unable to create an account with those details." },
+            400,
+        );
     }
 
-    return c.json(
-        {
-            user: data.user,
-            session: data.session,
-            requiresEmailConfirmation: !data.session,
-        },
-        201,
-    );
+    if (!data.session) {
+        return c.json(
+            {
+                user: toPublicUser(data.user),
+                requiresEmailConfirmation: true,
+            },
+            201,
+        );
+    }
+
+    try {
+        const sessionId = await createServerSession(
+            data.user.id,
+            data.session.access_token,
+            data.session.refresh_token,
+            data.session.expires_in,
+        );
+
+        setSessionCookie(c, sessionId);
+
+        return c.json(
+            {
+                user: toPublicUser(data.user),
+                requiresEmailConfirmation: false,
+            },
+            201,
+        );
+    } catch {
+        return c.json(
+            { error: "Account created, please log in." },
+            500,
+        );
+    }
 });
 
 auth.openapi(loginRoute, async (c) => {
     const { email, password } = c.req.valid("json");
-    const supabase = createSupabaseClient();
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await createAuthClient().auth.signInWithPassword({
         email,
         password,
     });
 
-    if (error || !data.session || !data.user) {
+    if (error || !data.user || !data.session) {
         return c.json({ error: "Invalid email or password." }, 401);
     }
 
-    return c.json(
-        {
-            user: data.user,
-            session: data.session,
-        },
-        200,
-    );
+    try {
+        const sessionId = await createServerSession(
+            data.user.id,
+            data.session.access_token,
+            data.session.refresh_token,
+            data.session.expires_in,
+        );
+
+        setSessionCookie(c, sessionId);
+
+        return c.json({ user: toPublicUser(data.user) }, 200);
+    } catch {
+        return c.json(
+            { error: "Unable to start a session. Please try again." },
+            500,
+        );
+    }
 });
 
 auth.openapi(logoutRoute, async (c) => {
-    const supabase = c.get("supabase");
-    const { error } = await supabase.auth.signOut({ scope: "local" });
+    const sessionId = readSessionCookie(c);
 
-    if (error) {
-        return c.json({ error: "Could not sign out." }, 500);
+    if (!sessionId) {
+        clearSessionCookie(c);
+        return c.json({ error: "Authentication required." }, 401);
     }
 
-    return c.json({ success: true }, 200);
+    try {
+        await revokeSession(sessionId);
+        clearSessionCookie(c);
+
+        return c.json({ success: true as const }, 200);
+    } catch {
+        return c.json({ error: "Could not sign out. Please try again." }, 500);
+    }
 });
 
-auth.openapi(meRoute, async (c) => {
-    const supabase = c.get("supabase");
-    const { data, error } = await supabase.auth.getUser();
-
-    if (error || !data.user) {
-        return c.json({ error: "Unauthenticated." }, 401);
-    }
-
-    return c.json(
-        {
-            user: {
-                id: data.user.id,
-                email: data.user.email ?? null,
-                displayName: data.user.user_metadata?.display_name ?? null,
-            },
-        },
-        200,
-    );
+auth.openapi(meRoute, (c) => {
+    return c.json({ user: toPublicUser(c.get("authUser")) }, 200);
 });
 
 export default auth;

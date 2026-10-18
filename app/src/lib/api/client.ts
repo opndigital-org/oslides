@@ -1,16 +1,18 @@
+
 import createClient from "openapi-fetch";
 import type { paths } from "@/lib/api/schema";
 
 export const api = createClient<paths>({
     baseUrl: import.meta.env.VITE_API_URL ?? "http://localhost:8600",
+    credentials: "include",
 });
 
 api.use({
-    async onRequest({ request }) {
-        const token = sessionStorage.getItem("oslides_access_token");
+    onRequest({ request }) {
+        const method = request.method.toUpperCase();
 
-        if (token) {
-            request.headers.set("Authorization", `Bearer ${token}`);
+        if (["POST", "PUT", "PATCH", "DELETE"].includes(method)) {
+            request.headers.set("X-CSRF-Protection", "1");
         }
 
         return request;

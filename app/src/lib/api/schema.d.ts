@@ -13,10 +13,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /**
-         * Register a user
-         * @description Create an account using an email, password, and display name.
-         */
+        /** Register a user */
         post: {
             parameters: {
                 query?: never;
@@ -29,7 +26,7 @@ export interface paths {
                     "application/json": {
                         /**
                          * Format: email
-                         * @example dev@finetype.org
+                         * @example dev@opnweb.org
                          */
                         email: string;
                         /** @example password123 */
@@ -47,23 +44,30 @@ export interface paths {
                     };
                     content: {
                         "application/json": {
-                            user?: unknown;
-                            session: ({
-                                access_token: string;
-                                refresh_token: string;
-                                token_type: string;
-                                expires_in: number;
-                                expires_at?: number;
-                                user?: unknown;
-                            } & {
-                                [key: string]: unknown;
-                            }) | null;
+                            user: {
+                                /** Format: uuid */
+                                id: string;
+                                /** Format: email */
+                                email: string | null;
+                                displayName: string | null;
+                            } | null;
                             requiresEmailConfirmation: boolean;
                         };
                     };
                 };
                 /** @description Invalid input or registration failed */
                 400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                        };
+                    };
+                };
+                /** @description Unable to start a session */
+                500: {
                     headers: {
                         [name: string]: unknown;
                     };
@@ -90,10 +94,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /**
-         * Log in
-         * @description Authenticate using email and password.
-         */
+        /** Log in */
         post: {
             parameters: {
                 query?: never;
@@ -104,12 +105,8 @@ export interface paths {
             requestBody: {
                 content: {
                     "application/json": {
-                        /**
-                         * Format: email
-                         * @example dev@finetype.org
-                         */
+                        /** Format: email */
                         email: string;
-                        /** @example password123 */
                         password: string;
                     };
                 };
@@ -122,16 +119,12 @@ export interface paths {
                     };
                     content: {
                         "application/json": {
-                            user?: unknown;
-                            session: {
-                                access_token: string;
-                                refresh_token: string;
-                                token_type: string;
-                                expires_in: number;
-                                expires_at?: number;
-                                user?: unknown;
-                            } & {
-                                [key: string]: unknown;
+                            user: {
+                                /** Format: uuid */
+                                id: string;
+                                /** Format: email */
+                                email: string | null;
+                                displayName: string | null;
                             };
                         };
                     };
@@ -158,6 +151,17 @@ export interface paths {
                         };
                     };
                 };
+                /** @description Unable to start a session */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            error: string;
+                        };
+                    };
+                };
             };
         };
         delete?: never;
@@ -175,10 +179,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /**
-         * Log out
-         * @description Sign out the current authenticated session.
-         */
+        /** Log out */
         post: {
             parameters: {
                 query?: never;
@@ -200,7 +201,7 @@ export interface paths {
                         };
                     };
                 };
-                /** @description Authentication required or token invalid */
+                /** @description Authentication required */
                 401: {
                     headers: {
                         [name: string]: unknown;
@@ -237,10 +238,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /**
-         * Get current user
-         * @description Return basic information about the authenticated user.
-         */
+        /** Get current user */
         get: {
             parameters: {
                 query?: never;
@@ -267,7 +265,7 @@ export interface paths {
                         };
                     };
                 };
-                /** @description Authentication required or token invalid */
+                /** @description Authentication required */
                 401: {
                     headers: {
                         [name: string]: unknown;

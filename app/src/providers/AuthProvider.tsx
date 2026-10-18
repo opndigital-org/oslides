@@ -24,21 +24,12 @@ type AuthContextValue = {
         displayName: string,
     ) => Promise<{ requiresEmailConfirmation: boolean }>;
     logout: () => Promise<void>;
+    refreshUser: () => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
 
-const TOKEN_KEY = "oslides_access_token";
-
-function saveToken(token: string) {
-    sessionStorage.setItem(TOKEN_KEY, token);
-}
-
-function clearToken() {
-    sessionStorage.removeItem(TOKEN_KEY);
-}
-
-function getErrorMessage(error: unknown): string {
+function getErrorMessage(error: unknown) {
     if (
         typeof error === "object" &&
         error !== null &&
@@ -55,24 +46,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<AuthUser | null>(null);
     const [loading, setLoading] = useState(true);
 
-    const restoreSession = useCallback(async () => {
-        if (!sessionStorage.getItem(TOKEN_KEY)) {
-            setLoading(false);
-            return;
-        }
-
+    const refreshUser = useCallback(async () => {
         try {
-            const { data, response } = await api.GET("/api/auth/me");
+            const { data, response, error } = await api.GET("/api/auth/me");
 
-            if (!response.ok || !data) {
-                clearToken();
+            if (!response.ok || error || !data) {
                 setUser(null);
                 return;
             }
 
             setUser(data.user);
         } catch {
-            clearToken();
             setUser(null);
         } finally {
             setLoading(false);
@@ -80,46 +64,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, []);
 
     useEffect(() => {
-        void restoreSession();
-    }, [restoreSession]);
+        void refreshUser();
+    }, [refreshUser]);
 
     const login = useCallback(async (email: string, password: string) => {
-        const { data, error, response } = await api.POST(
-            "/api/auth/login",
-            {
-                body: { email, password },
-            },
-        );
+        const { data, error, response } = await api.POST("/api/auth/login", {
+            body: { email, password },
+        });
 
         if (!response.ok || error || !data) {
             throw new Error(getErrorMessage(error));
         }
 
-        saveToken(data.session.access_token);
-
-        try {
-            const { data: meData, response: meResponse } =
-                await api.GET("/api/auth/me");
-
-            if (!meResponse.ok || !meData) {
-                clearToken();
-                throw new Error("Unable to load your account.");
-            }
-
-            setUser(meData.user);
-        } catch (error) {
-            clearToken();
-            setUser(null);
-            throw error;
-        }
+        setUser(data.user);
     }, []);
 
     const register = useCallback(
-        async (
-            email: string,
-            password: string,
-            displayName: string,
-        ) => {
+        async (email: string, password: string, displayName: string) => {
             const { data, error, response } = await api.POST(
                 "/api/auth/register",
                 {
@@ -131,24 +92,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 throw new Error(getErrorMessage(error));
             }
 
-            if (data.session?.access_token) {
-                saveToken(data.session.access_token);
-
-                try {
-                    const { data: meData, response: meResponse } =
-                        await api.GET("/api/auth/me");
-
-                    if (!meResponse.ok || !meData) {
-                        clearToken();
-                        throw new Error("Account created, but unable to load your session.");
-                    }
-
-                    setUser(meData.user);
-                } catch (error) {
-                    clearToken();
-                    setUser(null);
-                    throw error;
-                }
+            if (!data.requiresEmailConfirmation && data.user) {
+                setUser(data.user);
             }
 
             return {
@@ -159,23 +104,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 
     const logout = useCallback(async () => {
-        try {
-            if (sessionStorage.getItem(TOKEN_KEY)) {
-                const { response } = await api.POST("/api/auth/logout");
+        const { error, response } = await api.POST("/api/auth/logout");
 
-                if (!response.ok) {
-                    throw new Error("The server could not complete logout.");
-                }
-            }
-        } finally {
-            clearToken();
-            setUser(null);
+        if (!response.ok || error) {
+            throw new Error(getErrorMessage(error));
         }
+
+        setUser(null);
     }, []);
 
     return (
         <AuthContext.Provider
-            value={{ user, loading, login, register, logout }}
+            value={{
+                user,
+                loading,
+                login,
+                register,
+                logout,
+                refreshUser,
+            }}
         >
             {children}
         </AuthContext.Provider>
