@@ -6,6 +6,8 @@ import { cors } from "hono/cors";
 import { serve } from "@hono/node-server";
 
 import auth from "./routes/auth";
+import decks from "./routes/decks";
+
 
 const app = new OpenAPIHono();
 
@@ -50,7 +52,10 @@ app.get("/health", (c) =>
     c.json({ status: "ok", service: "oslides-api" }),
 );
 
+
 app.route("/api/auth", auth);
+app.route("/api/decks", decks);
+
 
 app.openAPIRegistry.registerComponent("securitySchemes", "CookieAuth", {
     type: "apiKey",

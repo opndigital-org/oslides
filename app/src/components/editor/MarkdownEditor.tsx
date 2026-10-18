@@ -7,14 +7,13 @@ import { oneDark } from "@codemirror/theme-one-dark";
 type MarkdownEditorProps = {
     markdown: string;
     onChange: (markdown: string) => void;
-    onSave: () => void;
-    onClear?: () => void;
+    handleSave: () => void;
 };
 
 export function MarkdownEditor({
     markdown,
     onChange,
-    onSave
+    handleSave
 }: MarkdownEditorProps) {
     return (
         <section className="flex min-h-0 min-w-0 flex-col overflow-hidden border-r border-slate-800 bg-[#0d1117]">
@@ -29,7 +28,7 @@ export function MarkdownEditor({
 
                 <button
                     className="rounded-lg border border-slate-700 bg-slate-900/80 py-2 px-4 text-xs font-mono uppercase text-slate-300 transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-30"
-                    onClick={onSave}
+                    onClick={handleSave}
                 >Save</button>
             </header>
 
@@ -40,7 +39,7 @@ export function MarkdownEditor({
                     height="100%"
                     minHeight="100%"
                     theme={oneDark}
-                     extensions={[
+                    extensions={[
                         markdownLanguage(),
                         EditorView.lineWrapping,
                     ]}
