@@ -28,7 +28,7 @@ export function MarkdownEditor({
                 </div>
 
                 <button
-                    className="rounded-lg border border-slate-700 bg-slate-900/80 py-2 px-4 text-xs text-slate-300 transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-30"
+                    className="rounded-lg border border-slate-700 bg-slate-900/80 py-2 px-4 text-xs font-mono uppercase text-slate-300 transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-30"
                     onClick={onSave}
                 >Save</button>
             </header>
