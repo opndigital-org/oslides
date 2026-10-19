@@ -12,9 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as NewRouteImport } from './routes/new'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as AuthenticatedDecksRouteImport } from './routes/_authenticated/decks'
+import { Route as AuthenticatedNewRouteImport } from './routes/_authenticated/new'
 import { Route as AuthenticatedEditIdRouteImport } from './routes/_authenticated/edit/$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -31,11 +31,6 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const NewRoute = NewRouteImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
@@ -44,6 +39,11 @@ const RegisterRoute = RegisterRouteImport.update({
 const AuthenticatedDecksRoute = AuthenticatedDecksRouteImport.update({
   id: '/decks',
   path: '/decks',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedNewRoute = AuthenticatedNewRouteImport.update({
+  id: '/new',
+  path: '/new',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedEditIdRoute = AuthenticatedEditIdRouteImport.update({
@@ -55,17 +55,17 @@ const AuthenticatedEditIdRoute = AuthenticatedEditIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/new': typeof NewRoute
   '/register': typeof RegisterRoute
   '/decks': typeof AuthenticatedDecksRoute
+  '/new': typeof AuthenticatedNewRoute
   '/edit/$id': typeof AuthenticatedEditIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/new': typeof NewRoute
   '/register': typeof RegisterRoute
   '/decks': typeof AuthenticatedDecksRoute
+  '/new': typeof AuthenticatedNewRoute
   '/edit/$id': typeof AuthenticatedEditIdRoute
 }
 export interface FileRoutesById {
@@ -73,24 +73,24 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/login': typeof LoginRoute
-  '/new': typeof NewRoute
   '/register': typeof RegisterRoute
   '/_authenticated/decks': typeof AuthenticatedDecksRoute
+  '/_authenticated/new': typeof AuthenticatedNewRoute
   '/_authenticated/edit/$id': typeof AuthenticatedEditIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/new' | '/register' | '/decks' | '/edit/$id'
+  fullPaths: '/' | '/login' | '/register' | '/decks' | '/new' | '/edit/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/new' | '/register' | '/decks' | '/edit/$id'
+  to: '/' | '/login' | '/register' | '/decks' | '/new' | '/edit/$id'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/login'
-    | '/new'
     | '/register'
     | '/_authenticated/decks'
+    | '/_authenticated/new'
     | '/_authenticated/edit/$id'
   fileRoutesById: FileRoutesById
 }
@@ -98,7 +98,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   LoginRoute: typeof LoginRoute
-  NewRoute: typeof NewRoute
   RegisterRoute: typeof RegisterRoute
 }
 
@@ -125,13 +124,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/new': {
-      id: '/new'
-      path: '/new'
-      fullPath: '/new'
-      preLoaderRoute: typeof NewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/register': {
       id: '/register'
       path: '/register'
@@ -146,6 +138,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDecksRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/new': {
+      id: '/_authenticated/new'
+      path: '/new'
+      fullPath: '/new'
+      preLoaderRoute: typeof AuthenticatedNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/edit/$id': {
       id: '/_authenticated/edit/$id'
       path: '/edit/$id'
@@ -158,11 +157,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDecksRoute: typeof AuthenticatedDecksRoute
+  AuthenticatedNewRoute: typeof AuthenticatedNewRoute
   AuthenticatedEditIdRoute: typeof AuthenticatedEditIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDecksRoute: AuthenticatedDecksRoute,
+  AuthenticatedNewRoute: AuthenticatedNewRoute,
   AuthenticatedEditIdRoute: AuthenticatedEditIdRoute,
 }
 
@@ -173,7 +174,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   LoginRoute: LoginRoute,
-  NewRoute: NewRoute,
   RegisterRoute: RegisterRoute,
 }
 export const routeTree = rootRouteImport
