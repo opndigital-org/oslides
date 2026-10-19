@@ -1,3 +1,4 @@
+
 import {
     createRootRoute,
     HeadContent,
@@ -14,22 +15,35 @@ export const Route = createRootRoute({
 });
 
 function RootLayout() {
-    const { user, logout } = useAuth();
+    const { user, loading, logout } = useAuth();
     const navigate = useNavigate();
+
+    const handleSignOut = async () => {
+        try {
+            await logout();
+            await navigate({ to: "/login" });
+        } catch (error) {
+            console.error("Failed to log out:", error);
+        }
+    };
 
     return (
         <>
             <HeadContent />
+
             <div className="min-h-screen bg-[#0d1117] text-slate-100">
                 <Navbar
                     isAuthenticated={Boolean(user)}
-                    onSignOut={async () => {
-                        await logout();
-                        await navigate({ to: "/login" });
-                    }}
+                    onSignOut={handleSignOut}
                 />
 
-                <Outlet />
+                {loading ? (
+                    <div className="flex min-h-[50vh] items-center justify-center">
+                        <p className="text-slate-400">Loading...</p>
+                    </div>
+                ) : (
+                    <Outlet />
+                )}
             </div>
         </>
     );

@@ -4,7 +4,7 @@ import { LayersPlus, Plus } from "lucide-react";
 import { createPageHead } from "@/lib/seo";
 import { api } from "@/lib/api/client";
 
-export const Route = createFileRoute("/decks")({
+export const Route = createFileRoute("/_authenticated/decks")({
     head: () =>
         createPageHead({
             title: "All Decks | oSlides",
