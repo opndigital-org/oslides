@@ -33,7 +33,7 @@ export const WorkInProgress = () => {
                     to="/new"
                     className="mt-5 px-4 py-2 rounded-lg bg-[#05C0D9] hover:bg-cyan-300 text-sm uppercase font-mono font-semibold text-[#0d1117] transition"
                 >
-                    Create your first deck
+                    Create deck
                 </Link>
             </div>
         </div>
