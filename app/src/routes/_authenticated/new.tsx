@@ -3,7 +3,7 @@ import { createFileRoute, HeadContent } from "@tanstack/react-router";
 import { EditorPage } from "@/components/editor/EditorPage";
 import { createPageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/new")({
+export const Route = createFileRoute("/_authenticated/new")({
     head: () =>
         createPageHead({
             title: "New Deck | oSlides",

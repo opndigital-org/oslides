@@ -3,7 +3,7 @@ import { api } from "@/lib/api/client";
 import { EditorPage } from "@/components/editor/EditorPage";
 import { createPageHead } from "@/lib/seo";
 
-export const Route = createFileRoute("/edit/$id")({
+export const Route = createFileRoute("/_authenticated/edit/$id")({
     loader: async ({ params }) => {
         const { data, error } = await api.GET("/api/decks/{id}", {
             params: {

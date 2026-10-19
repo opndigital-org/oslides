@@ -4,7 +4,7 @@ import { LayersPlus, Plus } from "lucide-react";
 import { createPageHead } from "@/lib/seo";
 import { api } from "@/lib/api/client";
 
-export const Route = createFileRoute("/decks")({
+export const Route = createFileRoute("/_authenticated/decks")({
     head: () =>
         createPageHead({
             title: "All Decks | oSlides",
@@ -108,13 +108,15 @@ function DecksPage() {
                     </p>
                 </div>
 
-                <Link
-                    to="/new"
-                    className="flex items-center gap-2 rounded-lg border border-slate-700 py-2 px-4 font-mono uppercase text-sm text-slate-300 hover:text-white hover:bg-slate-800 transition"
-                >
-                    <Plus size={16} aria-hidden="true" />
-                    Create Deck
-                </Link>
+                {(decks.length < 0) &&
+                    <Link
+                        to="/new"
+                        className="py-2 px-4 flex items-center gap-2 rounded-lg bg-[#05C0D9] hover:bg-cyan-300 text-sm uppercase font-mono font-semibold text-[#0d1117] transition"
+                    >
+                        <Plus size={16} aria-hidden="true" />
+                        Create Deck
+                    </Link>
+                }
             </header>
 
             {errorMessage && (
@@ -171,8 +173,8 @@ function DecksPage() {
                                 <article
                                     key={deck.id}
                                     className={`group relative overflow-hidden rounded-xl border bg-[#161b22] transition ${selected
-                                            ? "border-[#05C0D9] ring-1 ring-[#05C0D9]"
-                                            : "border-slate-800 hover:border-slate-600"
+                                        ? "border-[#05C0D9] ring-1 ring-[#05C0D9]"
+                                        : "border-slate-800 hover:border-slate-600"
                                         }`}
                                 >
                                     <div className="flex h-32 items-center justify-center border-b border-slate-800 bg-[#0d1117] p-4">

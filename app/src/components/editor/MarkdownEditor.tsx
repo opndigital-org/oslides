@@ -1,4 +1,3 @@
-
 import CodeMirror from "@uiw/react-codemirror";
 import { markdown as markdownLanguage } from "@codemirror/lang-markdown";
 import { EditorView } from "@codemirror/view";
@@ -13,10 +12,10 @@ type MarkdownEditorProps = {
 export function MarkdownEditor({
     markdown,
     onChange,
-    handleSave
+    handleSave,
 }: MarkdownEditorProps) {
     return (
-        <section className="flex min-h-0 min-w-0 flex-col overflow-hidden border-r border-slate-800 bg-[#0d1117]">
+        <section className="flex max-h-[calc(100dvh-60px)] min-h-0 min-w-0 flex-col overflow-hidden border-r border-slate-800 bg-[#0d1117]">
             <header className="flex shrink-0 items-center justify-between border-b border-slate-800 bg-[#0d1117] px-4 py-2">
                 <div className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-[#05C0D9]" />
@@ -27,21 +26,32 @@ export function MarkdownEditor({
                 </div>
 
                 <button
-                    className="rounded-lg border border-slate-700 bg-slate-900/80 py-2 px-4 text-xs font-mono uppercase text-slate-300 transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-30"
+                    type="button"
+                    className="rounded-lg border border-slate-700 bg-slate-900/80 px-4 py-2 text-xs font-mono uppercase text-slate-300 transition hover:bg-slate-800"
                     onClick={handleSave}
-                >Save</button>
+                >
+                    Save
+                </button>
             </header>
 
-            <div className="min-h-0 flex-1 overflow-auto bg-[#0d1117]">
+            <div className="min-h-0 min-w-0 flex-1 bg-[#0d1117]">
                 <CodeMirror
                     value={markdown}
                     onChange={onChange}
                     height="100%"
-                    minHeight="100%"
                     theme={oneDark}
                     extensions={[
                         markdownLanguage(),
                         EditorView.lineWrapping,
+                        EditorView.theme({
+                            "&": {
+                                height: "100%",
+                            },
+                            ".cm-scroller": {
+                                overflow: "auto",
+                                fontFamily: "inherit",
+                            },
+                        }),
                     ]}
                     basicSetup={{
                         lineNumbers: true,
@@ -58,10 +68,6 @@ export function MarkdownEditor({
                     editable
                     placeholder={"---\ntitle: My presentation\n---\n\n<!-- template: title -->\n# First slide\n\nStart writing Markdown..."}
                     className="h-full text-sm"
-                    style={{
-                        height: "100%",
-                        backgroundColor: "#0d1117",
-                    }}
                 />
             </div>
         </section>
