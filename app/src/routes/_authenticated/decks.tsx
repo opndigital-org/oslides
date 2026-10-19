@@ -108,7 +108,7 @@ function DecksPage() {
                     </p>
                 </div>
 
-                {(decks.length < 0) &&
+                {(decks.length > 0) &&
                     <Link
                         to="/new"
                         className="py-2 px-4 flex items-center gap-2 rounded-lg bg-[#05C0D9] hover:bg-cyan-300 text-sm uppercase font-mono font-semibold text-[#0d1117] transition"

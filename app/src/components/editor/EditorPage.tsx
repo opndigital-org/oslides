@@ -25,7 +25,7 @@ export function EditorPage({
         () => initialDeck?.markdownContent ?? "",
     );
     const [currentSlide, setCurrentSlide] = useState(0);
-    const [showEditor, setShowEditor] = useState(true);
+    const [showEditor] = useState(true);
     const [loading, setLoading] = useState(mode === "edit" && !initialDeck);
     const [saving, setSaving] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
