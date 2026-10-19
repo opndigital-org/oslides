@@ -8,6 +8,7 @@
 		"dev:app": "pnpm --dir app dev",
 		"dev:api": "pnpm --dir api dev",
 		"build:app": "pnpm --dir app build",
+		"typecheck:app": "pnpm --dir app typecheck",
 		"typecheck:api": "pnpm --dir api typecheck",
 		"api:generate": "pnpm --filter app exec openapi-typescript http://localhost:8600/openapi.json -o src/lib/api/schema.d.ts"
 	},
