@@ -1,9 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router"
+import { WorkInProgress } from "@/components/WorkInProgress"
 
-export const Route = createFileRoute('/_authenticated/settings')({
+export const Route = createFileRoute("/_authenticated/settings")({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  return <div>Hello "/_authenticated/settings"!</div>
+  return (
+    <main className="mx-auto min-h-[calc(100dvh-4rem)] w-full max-w-7xl px-6 py-10">
+      <WorkInProgress />
+    </main>
+  )
 }
