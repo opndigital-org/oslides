@@ -8,6 +8,7 @@ import {
 import { Navbar } from "@/components/Navbar";
 import { useAuth } from "@/hooks/useAuth";
 import { createPageHead } from "@/lib/seo";
+import { WarningBar } from "@/components/WarningBar";
 
 export const Route = createRootRoute({
     head: () => createPageHead(),
@@ -35,6 +36,10 @@ function RootLayout() {
                 <Navbar
                     isAuthenticated={Boolean(user)}
                     onSignOut={handleSignOut}
+                />
+
+                <WarningBar
+                    message="This project is a work in progress, some functionality has not been implemented. Always keep a copy of your markdown files."
                 />
 
                 {loading ? (

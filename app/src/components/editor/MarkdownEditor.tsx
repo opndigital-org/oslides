@@ -15,7 +15,7 @@ export function MarkdownEditor({
     handleSave,
 }: MarkdownEditorProps) {
     return (
-        <section className="flex max-h-[calc(100dvh-60px)] min-h-0 min-w-0 flex-col overflow-hidden border-r border-slate-800 bg-[#0d1117]">
+        <section className="flex max-h-[calc(100dvh-100px)] min-h-0 min-w-0 flex-col overflow-hidden border-r border-slate-800 bg-[#0d1117]">
             <header className="flex shrink-0 items-center justify-between border-b border-slate-800 bg-[#0d1117] px-4 py-2">
                 <div className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-[#05C0D9]" />
