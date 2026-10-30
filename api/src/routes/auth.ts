@@ -1,22 +1,22 @@
 
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
+
+import type { AuthEnv } from "../env";
+
 import {
-    adminSupabase,
     clearSessionCookie,
     createSessionId,
     encryptSecret,
+    getAdminSupabase,
     hashSessionId,
     readSessionCookie,
     revokeSession,
     setSessionCookie,
     SESSION_ABSOLUTE_LIFETIME_MS,
 } from "../lib/session";
+
 import { createAuthClient } from "../lib/auth-client";
 import { requireSession } from "../middleware/session-auth";
-import { type AuthEnv } from "../middleware/session-auth";
-
-const auth = new OpenAPIHono<AuthEnv>();
-
 
 import {
     errorSchema,
@@ -28,6 +28,7 @@ import {
     signUpSchema,
 } from "@oslides/shared";
 
+const auth = new OpenAPIHono<AuthEnv>();
 
 function toPublicUser(user: {
     id: string;
@@ -48,19 +49,25 @@ async function createServerSession(
     accessToken: string,
     refreshToken: string,
     expiresIn: number,
+    env: AuthEnv["Bindings"],
 ) {
     const sessionId = createSessionId();
     const now = Date.now();
+    const adminSupabase = getAdminSupabase(env);
 
     const { error } = await adminSupabase.from("app_sessions").insert({
         id_hash: hashSessionId(sessionId),
         user_id: userId,
-        access_token_encrypted: encryptSecret(accessToken),
-        refresh_token_encrypted: encryptSecret(refreshToken),
-        access_token_expires_at: new Date(now + expiresIn * 1000).toISOString(),
+        access_token_encrypted: encryptSecret(accessToken, env),
+        refresh_token_encrypted: encryptSecret(refreshToken, env),
+        access_token_expires_at: new Date(
+            now + expiresIn * 1000,
+        ).toISOString(),
         created_at: new Date(now).toISOString(),
         last_seen_at: new Date(now).toISOString(),
-        absolute_expires_at: new Date(now + SESSION_ABSOLUTE_LIFETIME_MS).toISOString(),
+        absolute_expires_at: new Date(
+            now + SESSION_ABSOLUTE_LIFETIME_MS,
+        ).toISOString(),
     });
 
     if (error) {
@@ -207,7 +214,7 @@ const meRoute = createRoute({
 auth.openapi(registerRoute, async (c) => {
     const { email, password, displayName } = c.req.valid("json");
 
-    const { data, error } = await createAuthClient().auth.signUp({
+    const { data, error } = await createAuthClient(c.env).auth.signUp({
         email,
         password,
         options: { data: { display_name: displayName } },
@@ -236,6 +243,7 @@ auth.openapi(registerRoute, async (c) => {
             data.session.access_token,
             data.session.refresh_token,
             data.session.expires_in,
+            c.env,
         );
 
         setSessionCookie(c, sessionId);
@@ -258,10 +266,11 @@ auth.openapi(registerRoute, async (c) => {
 auth.openapi(loginRoute, async (c) => {
     const { email, password } = c.req.valid("json");
 
-    const { data, error } = await createAuthClient().auth.signInWithPassword({
-        email,
-        password,
-    });
+    const { data, error } =
+        await createAuthClient(c.env).auth.signInWithPassword({
+            email,
+            password,
+        });
 
     if (error || !data.user || !data.session) {
         return c.json({ error: "Invalid email or password." }, 401);
@@ -273,6 +282,7 @@ auth.openapi(loginRoute, async (c) => {
             data.session.access_token,
             data.session.refresh_token,
             data.session.expires_in,
+            c.env,
         );
 
         setSessionCookie(c, sessionId);
@@ -295,12 +305,15 @@ auth.openapi(logoutRoute, async (c) => {
     }
 
     try {
-        await revokeSession(sessionId);
+        await revokeSession(sessionId, c.env);
         clearSessionCookie(c);
 
         return c.json({ success: true as const }, 200);
     } catch {
-        return c.json({ error: "Could not sign out. Please try again." }, 500);
+        return c.json(
+            { error: "Could not sign out. Please try again." },
+            500,
+        );
     }
 });
 

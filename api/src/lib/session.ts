@@ -8,39 +8,12 @@ import {
 import type { Context } from "hono";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env.SUPABASE_URL;
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const encryptionKeyHex = process.env.SESSION_ENCRYPTION_KEY;
-
-if (!supabaseUrl || !serviceRoleKey || !encryptionKeyHex) {
-    throw new Error("Missing server-side session environment variables.");
-}
-
-if (!/^[0-9a-fA-F]{64}$/.test(encryptionKeyHex)) {
-    throw new Error("SESSION_ENCRYPTION_KEY must be 32 bytes encoded as hex.");
-}
-
-const encryptionKey = Buffer.from(encryptionKeyHex, "hex");
+import type { Bindings } from "../env";
 
 export const COOKIE_NAME = "oslides_session";
 export const SESSION_MAX_AGE_SECONDS = 7 * 24 * 60 * 60;
 export const SESSION_ABSOLUTE_LIFETIME_MS =
     SESSION_MAX_AGE_SECONDS * 1000;
-
-const secureCookie = process.env.COOKIE_SECURE === "true";
-
-export const adminSupabase = createClient(
-    supabaseUrl,
-    serviceRoleKey,
-    {
-        auth: {
-            autoRefreshToken: false,
-            persistSession: false,
-            detectSessionInUrl: false,
-        },
-    },
-);
 
 export type StoredSession = {
     id_hash: string;
@@ -54,19 +27,44 @@ export type StoredSession = {
     revoked_at: string | null;
 };
 
+export function getAdminSupabase(env: Bindings) {
+    return createClient(
+        env.SUPABASE_URL,
+        env.SUPABASE_SERVICE_ROLE_KEY,
+        {
+            auth: {
+                autoRefreshToken: false,
+                persistSession: false,
+                detectSessionInUrl: false,
+            },
+        },
+    );
+}
+
+function getEncryptionKey(env: Bindings): Buffer {
+    const key = env.SESSION_ENCRYPTION_KEY;
+
+    if (!/^[0-9a-fA-F]{64}$/.test(key)) {
+        throw new Error(
+            "SESSION_ENCRYPTION_KEY must be 32 bytes encoded as hex.",
+        );
+    }
+
+    return Buffer.from(key, "hex");
+}
+
 export function hashSessionId(sessionId: string) {
-    return createHash("sha256")
-        .update(sessionId)
-        .digest("hex");
+    return createHash("sha256").update(sessionId).digest("hex");
 }
 
 export function createSessionId() {
     return randomBytes(32).toString("base64url");
 }
 
-export function encryptSecret(value: string) {
+export function encryptSecret(value: string, env: Bindings) {
+    const key = getEncryptionKey(env);
     const iv = randomBytes(12);
-    const cipher = createCipheriv("aes-256-gcm", encryptionKey, iv);
+    const cipher = createCipheriv("aes-256-gcm", key, iv);
 
     const ciphertext = Buffer.concat([
         cipher.update(value, "utf8"),
@@ -75,6 +73,7 @@ export function encryptSecret(value: string) {
 
     const tag = cipher.getAuthTag();
 
+    // Keep the existing stored format: iv.tag.ciphertext
     return [
         iv.toString("base64url"),
         tag.toString("base64url"),
@@ -82,7 +81,8 @@ export function encryptSecret(value: string) {
     ].join(".");
 }
 
-export function decryptSecret(value: string) {
+export function decryptSecret(value: string, env: Bindings) {
+    const key = getEncryptionKey(env);
     const [ivText, tagText, ciphertextText] = value.split(".");
 
     if (!ivText || !tagText || !ciphertextText) {
@@ -91,7 +91,7 @@ export function decryptSecret(value: string) {
 
     const decipher = createDecipheriv(
         "aes-256-gcm",
-        encryptionKey,
+        key,
         Buffer.from(ivText, "base64url"),
     );
 
@@ -103,30 +103,42 @@ export function decryptSecret(value: string) {
     ]).toString("utf8");
 }
 
-export function setSessionCookie(c: Context, sessionId: string) {
+export function setSessionCookie<E extends { Bindings: Bindings }>(
+    c: Context<E>,
+    sessionId: string,
+) {
     setCookie(c, COOKIE_NAME, sessionId, {
         httpOnly: true,
-        secure: secureCookie,
+        secure: c.env.COOKIE_SECURE === "true",
         sameSite: "Lax",
         path: "/",
         maxAge: SESSION_MAX_AGE_SECONDS,
     });
 }
 
-export function clearSessionCookie(c: Context) {
+export function clearSessionCookie<E extends { Bindings: Bindings }>(
+    c: Context<E>,
+) {
     deleteCookie(c, COOKIE_NAME, {
         httpOnly: true,
-        secure: secureCookie,
+        secure: c.env.COOKIE_SECURE === "true",
         sameSite: "Lax",
         path: "/",
     });
 }
 
-export function readSessionCookie(c: Context) {
+export function readSessionCookie<E extends { Bindings: Bindings }>(
+    c: Context<E>,
+) {
     return getCookie(c, COOKIE_NAME);
 }
 
-export async function findSession(sessionId: string) {
+export async function findSession(
+    sessionId: string,
+    env: Bindings,
+) {
+    const adminSupabase = getAdminSupabase(env);
+
     const { data, error } = await adminSupabase
         .from("app_sessions")
         .select("*")
@@ -142,7 +154,12 @@ export async function findSession(sessionId: string) {
     return data as StoredSession | null;
 }
 
-export async function revokeSession(sessionId: string) {
+export async function revokeSession(
+    sessionId: string,
+    env: Bindings,
+) {
+    const adminSupabase = getAdminSupabase(env);
+
     const { error } = await adminSupabase
         .from("app_sessions")
         .delete()

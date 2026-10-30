@@ -1,17 +1,6 @@
+
 import { createClient } from "@supabase/supabase-js";
-
-function requireEnv(name: string): string {
-    const value = process.env[name];
-
-    if (!value) {
-        throw new Error(`Missing environment variable: ${name}`);
-    }
-
-    return value;
-}
-
-const supabaseUrl = requireEnv("SUPABASE_URL");
-const supabaseKey = requireEnv("SUPABASE_ANON_KEY");
+import type { Bindings } from "../env";
 
 const authOptions = {
     auth: {
@@ -21,17 +10,28 @@ const authOptions = {
     },
 };
 
-export function createAuthClient() {
-    return createClient(supabaseUrl, supabaseKey, authOptions);
+export function createAuthClient(env: Bindings) {
+    return createClient(
+        env.SUPABASE_URL,
+        env.SUPABASE_ANON_KEY,
+        authOptions,
+    );
 }
 
-export function createUserClient(accessToken: string) {
-    return createClient(supabaseUrl, supabaseKey, {
-        ...authOptions,
-        global: {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
+export function createUserClient(
+    env: Bindings,
+    accessToken: string,
+) {
+    return createClient(
+        env.SUPABASE_URL,
+        env.SUPABASE_ANON_KEY,
+        {
+            ...authOptions,
+            global: {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
             },
         },
-    });
+    );
 }
