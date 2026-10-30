@@ -13,3 +13,6 @@ dist/
 # local supabase state
 supabase/.branches/
 supabase/.temp/
+
+# Cloudflare Workers / Wrangler (api/)
+.wrangler
