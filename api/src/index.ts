@@ -11,11 +11,12 @@ type Bindings = {
 
 const app = new OpenAPIHono<{ Bindings: Bindings }>();
 
-app.use("/api/*", async (c, next) => {
-    const appUrl = c.env.APP_URL;
-
-    await cors({
-        origin: appUrl,
+app.use(
+    "/api/*",
+    cors({
+        origin: (origin, c) => {
+            return origin === c.env.APP_URL ? origin : "";
+        },
         credentials: true,
         allowMethods: [
             "GET",
@@ -26,8 +27,8 @@ app.use("/api/*", async (c, next) => {
             "OPTIONS",
         ],
         allowHeaders: ["Content-Type", "X-CSRF-Protection"],
-    })(c, next);
-});
+    }),
+);
 
 app.use("/api/*", async (c, next) => {
     if (["POST", "PUT", "PATCH", "DELETE"].includes(c.req.method)) {
