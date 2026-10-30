@@ -301,7 +301,9 @@ auth.openapi(loginRoute, async (c) => {
         setSessionCookie(c, sessionId);
 
         return c.json({ user: toPublicUser(data.user) }, 200);
-    } catch {
+    } catch (error) {
+        console.error("Login session creation failed:", error);
+
         return c.json(
             { error: "Unable to start a session. Please try again." },
             500,
