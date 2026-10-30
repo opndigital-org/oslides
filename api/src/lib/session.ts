@@ -28,17 +28,37 @@ export type StoredSession = {
 };
 
 export function getAdminSupabase(env: Bindings) {
-    return createClient(
-        env.SUPABASE_URL,
-        env.SUPABASE_SERVICE_ROLE_KEY,
-        {
-            auth: {
-                autoRefreshToken: false,
-                persistSession: false,
-                detectSessionInUrl: false,
+    console.log("Admin Supabase config check:", {
+        hasUrl: Boolean(env.SUPABASE_URL),
+        url: env.SUPABASE_URL,
+        hasServiceRoleKey: Boolean(env.SUPABASE_SERVICE_ROLE_KEY),
+        serviceRoleKeyLength: env.SUPABASE_SERVICE_ROLE_KEY?.length ?? 0,
+    });
+
+    if (!env.SUPABASE_URL) {
+        throw new Error("SUPABASE_URL is missing from Worker environment.");
+    }
+
+    if (!env.SUPABASE_SERVICE_ROLE_KEY) {
+        throw new Error("SUPABASE_SERVICE_ROLE_KEY is missing from Worker environment.");
+    }
+
+    try {
+        return createClient(
+            env.SUPABASE_URL,
+            env.SUPABASE_SERVICE_ROLE_KEY,
+            {
+                auth: {
+                    autoRefreshToken: false,
+                    persistSession: false,
+                    detectSessionInUrl: false,
+                },
             },
-        },
-    );
+        );
+    } catch (error) {
+        console.error("Admin Supabase client initialization error:", error);
+        throw error;
+    }
 }
 
 function getEncryptionKey(env: Bindings): Buffer {
