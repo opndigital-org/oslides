@@ -12,7 +12,7 @@ import {
 
 import { requireSession } from "../middleware/session-auth";
 
-import type { AuthEnv } from "../middleware/session-auth";
+import type { AuthEnv } from "../env";
 
 const decks = new OpenAPIHono<AuthEnv>();
 

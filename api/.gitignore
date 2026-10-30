@@ -4,6 +4,8 @@
 !.env.example
 !.env.*.example
 
+.dev.vars
+
 # dependencies and build output
 node_modules/
 dist/
