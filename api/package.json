@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "wrangler dev --ip 127.0.0.1 --port 8600",
     "typecheck": "tsc --noEmit",
-    "start": "tsx src/index.ts"
+    "start": "tsx src/index.ts",
+    "deploy": "wrangler deploy",
+    "cf:types": "wrangler types"
   },
   "keywords": [],
   "author": "",

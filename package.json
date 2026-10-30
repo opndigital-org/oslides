@@ -5,11 +5,19 @@
 		"supabase:start": "supabase start",
 		"supabase:stop": "supabase stop",
 		"supabase:reset": "supabase db reset",
-		"dev:app": "pnpm --dir app dev",
-		"dev:api": "pnpm --dir api dev",
-		"build:app": "pnpm --dir app build",
+		
 		"typecheck:app": "pnpm --dir app typecheck",
 		"typecheck:api": "pnpm --dir api typecheck",
+
+		"dev:app": "pnpm --dir app dev",
+		"dev:api": "pnpm --dir api dev",
+		
+		"build:app": "pnpm --filter app run build",
+		"deploy:app": "pnpm --filter app exec wrangler deploy",
+
+		"build:api": "pnpm --filter api run typecheck",
+		"deploy:api": "pnpm --filter api exec wrangler deploy",
+
 		"api:generate": "pnpm --filter app exec openapi-typescript http://localhost:8600/openapi.json -o src/lib/api/schema.d.ts"
 	},
 	"devDependencies": {
