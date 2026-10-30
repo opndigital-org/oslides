@@ -221,8 +221,21 @@ auth.openapi(registerRoute, async (c) => {
     });
 
     if (error || !data.user) {
+        console.error("Supabase signup failed:", {
+            message: error?.message,
+            status: error?.status,
+            code: error?.code,
+        });
+
         return c.json(
-            { error: "Unable to create an account with those details." },
+            {
+                error: "Unable to create an account with those details.",
+                debug: {
+                    message: error?.message,
+                    status: error?.status,
+                    code: error?.code,
+                },
+            },
             400,
         );
     }
