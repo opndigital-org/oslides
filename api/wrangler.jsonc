@@ -6,5 +6,10 @@
   "compatibility_flags": ["nodejs_compat"],
   "observability": {
     "enabled": true
+  },
+  "vars": {
+    "APP_URL": "https://oslides.opndigital.org",
+    "API_URL": "https://oslides-api.opndigital.org",
+    "COOKIE_SECURE": "true"
   }
 }
