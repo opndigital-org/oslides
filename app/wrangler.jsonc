@@ -11,11 +11,11 @@
     "enabled": true
   },
   "vars": {
-    "API_URL": "https://oslides-api.opndigital.org",
+    "VITE_API_URL": "https://oslides-api.opndigital.org",
   },
   "previews": {
     "vars": {
-      "API_URL": "https://oslides-api.andrea-melissa-rodrigues.workers.dev",
+      "VITE_API_URL": "https://oslides-api.andrea-melissa-rodrigues.workers.dev",
     }
   }
 }
