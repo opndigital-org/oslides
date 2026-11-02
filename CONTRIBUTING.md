@@ -3,14 +3,14 @@
 > This project does not support the use of AI generated code.
 Any issues submitted or contributions that is suspected of using AI for development will be closed, rejected and NOT merged. 
 
-- [First contribution](##first-contribution)
-- [Development Setup](##development-setup) 
-- [Working on the code](##working-on-the-code)
-  - [Pull Requests](###pull-requests)
-  - [Branches](###branches)
-  - [Commit Messages](###commit-messages)
-- [Reporting Bugs](##reporting-bugs)
-- [Security Issues](##security-issues)
+- [First contribution](#first-contribution)
+- [Development Setup](#development-setup) 
+- [Working on the code](#working-on-the-code)
+  - [Pull Requests](#pull-requests)
+  - [Branches](#branches)
+  - [Commit Messages](#commit-messages)
+- [Reporting Bugs](#reporting-bugs)
+- [Security Issues](#security-issues)
 
 ## First contribution
 1. Find an [approved and unassigned issue](https://github.com/opndigital-org/oslides/issues?q=is%3Aissue+state%3Aopen+label%3Astatus%3Aapproved+no%3Aassignee). For first time contributors, check issues labelled:
@@ -18,7 +18,7 @@ Any issues submitted or contributions that is suspected of using AI for developm
     - [`tag:help-wanted`](https://github.com/opndigital-org/oslides/issues?q=is%3Aissue+state%3Aopen+label%3Astatus%3Aapproved+no%3Aassignee+label%3Atag%3Ahelp-wanted)
 2. Comment on it ***"I'd like to take this"***.
     - A maintainer will assign you within 48 hours
-3. Follow [Development Setup](##development-setup) to get started and [Working on the code](##working-on-the-code) on naming conventions for PRs, branches, commit messages (and signing off commits).
+3. Follow [Development Setup](#development-setup) to get started and [Working on the code](#working-on-the-code) on naming conventions for PRs, branches, commit messages (and signing off commits).
 4. Open a PR early and keep it in ***Draft***. When you think its ready mark it as ***Ready for Review*** so we know to review it.
 
 ## Development Setup
@@ -58,8 +58,8 @@ API docs available at: `http://localhost:8600/docs`
 
 Keep PRs focused - The maintainers's job gets exponentially harder as scope grows.
 
-1. Fork the repo see [Development Setup](##development-setup)
-2. Make changes on a feature branch (see [Branches](###branches) and [Commit Messages](###commit-messages)).
+1. Fork the repo see [Development Setup](#development-setup)
+2. Make changes on a feature branch (see [Branches](#branches) and [Commit Messages](#commit-messages)).
 3. Push and open a PR against `main` (see the following section for naming PRs).
 
 ```
