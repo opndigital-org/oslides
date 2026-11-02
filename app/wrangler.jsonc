@@ -9,5 +9,13 @@
   },
   "observability": {
     "enabled": true
+  },
+  "vars": {
+    "VITE_API_URL": "https://oslides-api.opndigital.org",
+  },
+  "previews": {
+    "vars": {
+      "VITE_API_URL": "https://oslides-api.andrea-melissa-rodrigues.workers.dev",
+    }
   }
 }

@@ -1,0 +1,52 @@
+name: Feature request
+description: Propose a new feature, capability, or improvement.
+title: "[Feature] "
+labels:
+  - "tag:enhancement"
+  - "status:triage"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please describe the problem then the proposal. This project
+        is follows the User-centered design framework,  so each
+        feature should focus on the users needs and pain points.
+        Proposals that violate those principles will not be accepted.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user need or pain point does this address?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What do you want to build or change?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: areas
+    attributes:
+      label: Areas
+      multiple: true
+      options:
+        - app (frontend)
+        - api (backend)
+        - supabase / database
+        - docs
+        - other
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmations
+      options:
+        - label: I searched existing issues and this is not a duplicate.
+          required: true
