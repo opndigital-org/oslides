@@ -1,0 +1,10 @@
+# CODEOWNERS for oSlides
+#
+# Syntax: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# The user(s) listed below are automatically requested for review on
+# matching PRs. Replace `@your-github-handle` with the real handle(s)
+# once they are known.
+
+# Default fallback — everything not matched below.
+*                     @andyrodrigues30
