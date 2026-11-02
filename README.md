@@ -12,6 +12,8 @@
 
 
 ## Quick start
+Please read [CONTRIBUTING.md](https://github.com/opndigital-org/oslides/blob/main/CONTRIBUTING.md) before creating an Issue or Pull Request.
+
 ```bash
 # 1. Fork, Clone and install
 git clone https://github.com/{USER}/bluelearn.git
