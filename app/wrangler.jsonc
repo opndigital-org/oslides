@@ -10,5 +10,12 @@
   "observability": {
     "enabled": true
   },
-  "previews": {}
+  "vars": {
+    "API_URL": "https://oslides-api.opndigital.org",
+  },
+  "previews": {
+    "vars": {
+      "API_URL": "https://oslides-api.andrea-melissa-rodrigues.workers.dev",
+    }
+  }
 }
