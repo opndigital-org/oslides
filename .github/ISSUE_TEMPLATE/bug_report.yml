@@ -13,7 +13,7 @@ body:
         save a lot of back-and-forth.
 
         For security vulnerabilities, **do not file a public issue.**
-        See [SECURITY.md](../blob/main/SECURITY.md).
+        See [Security Issues](https://github.com/opndigital-org/oslides/blob/main/CONTRIBUTING.md#security-issues)
 
   - type: textarea
     id: summary
