@@ -11,5 +11,12 @@
     "APP_URL": "https://oslides.opndigital.org",
     "API_URL": "https://oslides-api.opndigital.org",
     "COOKIE_SECURE": "true"
+  },
+  "previews": {
+    "vars": {
+      "APP_URL": "https://oslides.andrea-melissa-rodrigues.workers.dev",
+      "API_URL": "https://oslides-api.andrea-melissa-rodrigues.workers.dev",
+      "COOKIE_SECURE": "true"
+    }
   }
 }
