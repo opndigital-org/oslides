@@ -16,8 +16,8 @@ Please read [CONTRIBUTING.md](https://github.com/opndigital-org/oslides/blob/mai
 
 ```bash
 # 1. Fork, Clone and install
-git clone https://github.com/{USER}/bluelearn.git
-cd bluelearn
+git clone https://github.com/{USER}/oslides.git
+cd oslides
 pnpm install
 
 # 2. Start local Supabase (Postgres + Auth on docker)
