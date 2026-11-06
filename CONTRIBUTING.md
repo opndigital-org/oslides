@@ -26,8 +26,8 @@ Any issues submitted or contributions that is suspected of using AI for developm
 1. Fork the repository to your own GitHub account, then run the following commands in your terminal.
 
 ```bash
-git clone https://github.com/<your-username>/bluelearn.git
-cd bluelearn
+git clone https://github.com/<your-username>/oslides.git
+cd oslides
 pnpm install
 ```
 
